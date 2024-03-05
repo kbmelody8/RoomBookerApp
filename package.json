@@ -5,10 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build-css": "postcss styles/style.css -o public/styles.css",
-    "tailwind:css": "postcss public/stylesheets/tailwind.css -o public/stylesheets/style.css",
-    "devcss": "postcss public/styles/tailwind.css -o public/styles/style.css -w"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -26,11 +23,5 @@
     "mongoose": "^8.2.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.18",
-    "postcss": "^8.4.35",
-    "postcss-cli": "^11.0.0",
-    "tailwindcss": "^3.4.1"
   }
 }
