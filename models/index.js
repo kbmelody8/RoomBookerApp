@@ -22,5 +22,6 @@ db.on("connected", function() {
 module.exports = {
     Employee: require("./Employee"),
     Booking: require("./Booking"),
-    Room: require("./Room")
+    Room: require("./Room"),
+    seedRooms: require("../seed/roomseed")
 }

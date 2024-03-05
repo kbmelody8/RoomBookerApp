@@ -5,7 +5,14 @@ const isAuthenticated = require("../controllers/isAuthenticated")
 router.use(isAuthenticated)
 
 router.get("/", isAuthenticated,  (req, res) => {
-res.render("profile.ejs")
+    db.Employee.findById({_id: req.session.currentUser._id})
+    .then (employee=> {
+        res.render("profile.ejs",  {
+            employee: employee,
+            currentUser: req.session.currentUser 
+        })
+    })
+    .catch(err => res.status(500).json({error: err.message}));
 })
 
 

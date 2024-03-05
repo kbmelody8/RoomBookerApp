@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css" type="text/css" />
     <title>Sign Up</title>
 </head>
 <body>
-    <h1>Sign Up</h1>
+    <div class = "max-w-[1200px] my-auto">
+    <h1 class="text-blue-600">Sign Up</h1>
     <form action="/session/signup" method="POST">
         First Name: <input required type="text" name="firstName"/><br>
         Last Name: <input required type="text" name="lastName"/><br>
@@ -20,5 +22,6 @@
         Confirm password: <input required type="password" name="confirmPassword"><br>
         <input type="submit" name="" value="Sign Up"/>
     </form>
+    </div>
 </body>
 </html>

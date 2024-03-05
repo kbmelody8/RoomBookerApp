@@ -13,9 +13,10 @@ const meetingRoomSchema = new mongoose.Schema({
     },
     capacity: {
         type: Number,
-        required: true
+        required: true,
+        enum: [5, 10, 30, 50, 70, 100]
     },
-    booked: {
+    bookedStatus: {
         type: Boolean,
         required: true
     },

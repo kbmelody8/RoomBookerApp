@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+
+    <section class="application">
+        <a href="/profile">My Profile</a>
+        <h2> Room Details</h2>
+                <h2>Room name: <%=room.room%></h1>
+                    <h2>Floor: <%= room.floor%></h2>
+                    <h2>Capacity:<%= room.capacity%></h2>
+                    <h2>Booked Status:<% if (room.bookedStatus) { %>
+                        <p> available for booking!!!</p>
+                        <%} else { %>
+                        <p> already booked </p>
+                        <% } %> 
+                    </h2>
+                    <form action="/book/create/<%= room._id %>" method="POST">
+                        <label for="room">Room Name:</label><br>
+                        <input type="text" id="room" name="room" required><br>   
+                        <label for="startTime">Start Time:</label><br>
+                        <input type="datetime-local" id="startTime" name="startTime" required><br> 
+                        <label for="endTime">End Time:</label><br>
+                        <input type="datetime-local" id="endTime" name="endTime" required><br> 
+                        <label for="subject">Subject:</label><br>
+                        <input type="subject" id="subject" name="subject" required><br> 
+                        <label for="booker">Participants:</label><br>
+                        <input type="text" id="booker" name="bookerId" required><br> 
+                        <input type="submit" value="Submit">
+                    </form>
+    </section>
+
+    
+</body>
+
+</html>

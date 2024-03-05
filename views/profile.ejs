@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
 </head>
+
 <body>
-    <h1>Profile</h1>
-    <form action="/session/signin" method="POST">
-        Username: <input required type="text" name="username"/><br>
-        Password: <input required type="password" name="password"><br>
-        <input type="submit" name="" value="Login"/>
-    </form>
+    <section class="application">
+                <h2>Welcome to Nova, <%=employee.username %></h2>
+                    <h2>FirstName: <%=employee.firstName%></h1>
+                    <h2>LastName: <%= employee.lastName %></h2>
+                    <h2>Department:<%= employee.department%></h2>
+                    <h2>Position:<%= employee.position %></h2>
+                    <h2>Email:<%= employee.email%></h2>
+                    <h2>Phone number:<%= employee.phoneNumber%></h2>
+                    <h2>Picture: <img src="<%=employee.picture%>" alt="Employee image"></h2>
+                    <a href="/book">Book</a>
+                    <a href="/rooms">Rooms</a>
+    </section>
+    
 </body>
+
 </html>

@@ -2,17 +2,17 @@
 --------------------------------------------------------------- */
 /* Require the routes in the controllers folder
 --------------------------------------------------------------- */
+const express = require("express");
+const session = require("express-session")
 const empCtrl = require("./controllers/employeeController")
 // const bookingCtrl = require('./controllers/bookingController')
-// const roomCtrl = require('./controllers/roomController')
+const roomCtrl = require('./controllers/roomController')
 const sessionCtrl = require("./controllers/sessionController")
 const profileCtrl = require("./controllers/profileController")
 
 const axios = require("axios");
-const session = require("express-session")
 require("dotenv").config()
 const path = require("path");
-const express = require("express");
 const methodOverride = require("method-override");
 const livereload = require("livereload");
 const connectLiveReload = require("connect-livereload");
@@ -25,7 +25,13 @@ const db = require("./models");
 /* Create the Express app
 --------------------------------------------------------------- */
 const app = express();
-
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false, 
+    saveUninitialized: false 
+  })
+)
 /* Configure the app to refresh the browser when nodemon restarts
 --------------------------------------------------------------- */
 const liveReloadServer = livereload.createServer();
@@ -58,27 +64,33 @@ app.use("/employee", empCtrl)
 app.use("/session", sessionCtrl)
 app.use("/profile", profileCtrl)
 // app.use("/booking", bookingCtrl)
-// app.use("/room", roomCtrl)
+app.use("/rooms", roomCtrl)
 
-app.use(
-  session({
-    secret: process.env.SECRET_KEY,
-    resave: false, 
-    saveUninitialized: false 
-  })
-)
 
 
 // Mount ROUTES
 // INDUCES
-//INDEX route for fetching all employees
+// INDEX route for fetching all employees
 app.get("/", (req, res) => {
     db.Employee.find({})
       .then(employees => res.json(employees))
       .catch(error => res.status(500).json({ error: 'An error occurred fetching employees' }));
   });
-  
-  
+
+//SEEDING route
+app.get('/seed', function (req, res) {
+  // Remove any existing pets
+  db.Room.deleteMany({})
+      .then(removedRoom => {
+          console.log(`Removed ${removedRoom.deletedCount} rooms`)
+          // Seed the pets collection with the seed data
+          db.Room.insertMany(db.seedRooms)
+              .then(addedRoom => {
+                  console.log(`Added ${addedRoom.length} rooms to be adopted`)
+                  res.json(addedRoom)
+              })
+      })
+});
 
 /* App listening on the specified in ENV port
 --------------------------------------------------------------- */
