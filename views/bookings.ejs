@@ -1,0 +1,23 @@
+<body>
+    <h1>My Bookings</h1>
+    <% if (bookings.length === 0) { %>
+        <p>You have no bookings.</p>
+    <% } else { %>
+        <ul>
+            <% bookings.forEach(booking => { %>
+                <li>
+                    <h2>Room: <%= booking.room.room %></h2>
+                    <p>Start Time: <%= booking.startTime %></p>
+                    <p>End Time: <%= booking.endTime %></p>
+                    <p>Subject: <%= booking.subject %></p>
+                    <p>Participants: 
+                        <% booking.participants.forEach(participant => { %>
+                            <%= participant %>
+                        <% }) %>
+                    </p>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</body>
+</html>

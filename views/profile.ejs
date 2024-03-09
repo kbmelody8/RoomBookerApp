@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <%- include('./partials/head.ejs', {title: 'My Profile'}) %>
 </head>
 
 <body>
+    <%- include('./partials/nav.ejs') %>
     <section class="application">
-                <h2>Welcome to Nova, <%=employee.username %></h2>
-                    <h2>FirstName: <%=employee.firstName%></h1>
-                    <h2>LastName: <%= employee.lastName %></h2>
-                    <h2>Department:<%= employee.department%></h2>
-                    <h2>Position:<%= employee.position %></h2>
+                <h2>Welcome to your Nova profile, <%=employee.username.charAt(0).toUpperCase() + employee.username.slice(1).toLowerCase()%></h2>
+                <h2>FirstName: <%= employee.firstName.charAt(0).toUpperCase() + employee.firstName.slice(1).toLowerCase()%></h2>
+                <h2>LastName: <%= employee.lastName.charAt(0).toUpperCase() + employee.lastName.slice(1).toLowerCase()%></h2>
+                <h2>Department: <%= employee.department%></h2>
+                <h2>Position: <%= employee.position%></h2>
                     <h2>Email:<%= employee.email%></h2>
                     <h2>Phone number:<%= employee.phoneNumber%></h2>
-                    <h2>Picture: <img src="<%=employee.picture%>" alt="Employee image"></h2>
-                    <a href="/book">Book</a>
-                    <a href="/rooms">Rooms</a>
+                    <h2>Photo: <img src="<%=employee.picture%>" alt="Employee image" class="w-40 h-40 object-cover"></h2>
     </section>
-    
+    <%- include('./partials/footer.ejs') %>
 </body>
 
 </html>

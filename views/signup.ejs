@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com/?version=3.4.1"></script>
-    <title>Sign Up</title>
+    <%- include('./partials/head.ejs', {title: 'Signup'}) %>
 </head>
 <body>
         <h1 class="text-blue-600">Sign Up</h1>
     <form action="/session/signup" method="POST">
-        First Name: <input required type="text" name="firstName"/><br>
-        Last Name: <input required type="text" name="lastName"/><br>
-        Department: <input required type="text" name="department"/><br>
-        Position: <input required type="text" name="position"/><br>
-        Email: <input required type="email" name="email"/><br>
-        Phone number: <input required type="text" name="phoneNumber"/><br>
-        Picture: <input required type="url" name="picture"><br>
-        Username: <input required type="text" name="username"/><br>
-        Password: <input required type="password" name="password"><br>
-        Confirm password: <input required type="password" name="confirmPassword"><br>
-        <input type="submit" name="" value="Sign Up"/>
+        First Name: <input required type="text" name="firstName" placeholder="First name"><br>
+        Last Name: <input required type="text" name="lastName"placeholder="Last name"><br>
+        Department: <input required type="text" name="department" placeholder="Department"><br>
+        Position: <input required type="text" name="position" placeholder="Position"><br>
+        Corporate Email: <input required type="email" name="email" placeholder="Email"/><br>
+        Phone number: <input required type="text" name="phoneNumber" placeholder="Phone number"><br>
+        Image: <input required type="text" name="picture" placeholder="Image"><br>
+        Username: <input required type="text" name="username"placeholder="Username"><br> 
+        Password: <input required type="password" name="password" placeholder="Password"><br>
+        Confirm password: <input required type="password" name="confirmPassword" placeholder="Confirm password"><br>
+        <button type="submit" class="bg-blue-500 text-white rounded-md px-4 py-2">Sign Up</button>
     </form>
     </div>
+    <%- include('./partials/footer.ejs') %>
 </body>
 </html>

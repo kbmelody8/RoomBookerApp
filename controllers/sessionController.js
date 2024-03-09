@@ -35,7 +35,13 @@ router.get("/signup", (req, res) => {
 
 //SIGNUP
 router.post('/signup', async (req, res) => {
-    // Find the employee trying to log inby email  (so that we can compare passwords)
+    // Check if the email ends with the copr domain
+    const email = req.body.email
+    const domain = "@example.com"
+    if(!email.endsWith(domain)) {
+        return res.send(`Please use your corporate email domain`)
+    }
+    // Find by email the existing employee trying to sign up (so that we can compare passwords)
     try {
         const foundEmployee = await db.Employee.findOne({ email: req.body.email })
         // After the  employee is found in DB - compare passwords
@@ -52,6 +58,7 @@ router.post('/signup', async (req, res) => {
                 ...rest, password: hashedString
             })
             //       2a) if the passwords match, create a new session
+            req.session.currentUser = newEmployee
             // req["session"].currentUser = newEmployee
             res.redirect('/profile')
         }
@@ -61,8 +68,11 @@ router.post('/signup', async (req, res) => {
     }
 })
 
-
-
+router.get("/signout", (req, res )=> {
+    req.session.destroy (()=> {
+        res.redirect("/session/signin")
+    })
+})
 
 
 module.exports = router

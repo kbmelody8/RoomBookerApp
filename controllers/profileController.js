@@ -16,6 +16,4 @@ router.get("/", isAuthenticated,  (req, res) => {
 })
 
 
-
-
 module.exports = router

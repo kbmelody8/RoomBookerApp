@@ -2,7 +2,6 @@ const express = require("express");
 //axios takes the response from the api an stores it in data
 const axios = require("axios");
 require("dotenv").config();
-// const Employee = require("../models/Employee"); 
 const bcrypt = require('bcrypt');
 const db = require('../models')
 const router = express.Router()

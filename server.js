@@ -4,10 +4,10 @@
 --------------------------------------------------------------- */
 const express = require("express");
 const session = require("express-session")
-const empCtrl = require("./controllers/employeeController")
-// const bookingCtrl = require('./controllers/bookingController')
-const roomCtrl = require('./controllers/roomController')
 const sessionCtrl = require("./controllers/sessionController")
+const empCtrl = require("./controllers/employeeController")
+const bookingCtrl = require('./controllers/bookingController')
+const roomCtrl = require('./controllers/roomController')
 const profileCtrl = require("./controllers/profileController")
 
 const axios = require("axios");
@@ -60,10 +60,10 @@ app.use(express.json()) //this creates an empty object { } , before that it’s 
 // into an object that can be accessed in the request parameter as a property called body (req.body).
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan("tiny"))
-app.use("/employee", empCtrl)
 app.use("/session", sessionCtrl)
+app.use("/employee", empCtrl)
 app.use("/profile", profileCtrl)
-// app.use("/booking", bookingCtrl)
+app.use("/booking", bookingCtrl)
 app.use("/rooms", roomCtrl)
 
 
@@ -77,8 +77,8 @@ app.get("/", (req, res) => {
       .catch(error => res.status(500).json({ error: 'An error occurred fetching employees' }));
   });
 
-//SEEDING route
-app.get('/seed', function (req, res) {
+//SEEDING route for rooms
+app.get ("/seed", function (req, res) {
   // Remove any existing pets
   db.Room.deleteMany({})
       .then(removedRoom => {

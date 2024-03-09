@@ -2,31 +2,25 @@
 <html lang="en">
 
 <head>
+    <%- include('./partials/head.ejs', {title: 'Rooms'}) %>
 </head>
 
 <body>
-
+    <%- include('./partials/nav.ejs') %>
     <section class="application">
-        <a href="/profile">My Profile</a>
-        <h2> Here are all the available rooms </h2>
+        <h2> Rooms List </h2>
         <ul>
             <% for (let room of rooms) { %>
             <li>
-                <h2>Room name: <%=room.room%></h1>
-                    <h2>Floor: <%= room.floor%></h2>
+                <h2>Room name:<%= room.room %></h2>
+                <h2>Floor: <%= room.floor %></h2>
                     <h2>Capacity:<%= room.capacity%></h2>
-                    <h2>Booked Status:<% if (room.bookedStatus) { %>
-                        <p> available for booking!!!</p>
-                        <%} else { %>
-                        <p> already booked </p>
-                        <% } %> 
-                    </h2>
-                    <h2>Bookings:<%= room.bookings%><a href="/book" id =<%=room._id%>>Book</a></h2>
+                    <h2>Bookings:<%= room.bookings%><a href="/rooms/<%= room._id %>">Book</a></h2>
             </li>
             <% } %>
         </ul>
     </section>
-    
+    <%- include('./partials/footer.ejs') %>
 </body>
 
 </html>
