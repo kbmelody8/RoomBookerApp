@@ -6,17 +6,184 @@ const isAuthenticated = require("../controllers/isAuthenticated")
 router.use(isAuthenticated)
 
 
-//INDEX  - logged in employee can see all their bookings
+// INDEX - see all their bookings
 router.get("/", isAuthenticated, (req, res) => {
     db.Booking.find({ bookerId: req.session.currentUser._id })
-.populate('room') //ref room document
-    .then(bookings => {
-        res.render("bookings.ejs", { bookings });
-    })
-    .catch(error => {
-        res.status(500).send(error.message);
-    });
+        .then(bookings => {
+            // Convert each booking into a promise that resolves to the booking with participant names.
+            const bookingPromises = bookings.map(async (item) => {
+                // Await the resolution of all participant name fetches for this booking.
+                const room = await db.Room.findById(item.room)
+                const participantNames = await Promise.all(item.participants.map(async (participantId) => {
+                    const participant = await db.Employee.findById(participantId); // Correctly await the document.
+                    if (participant) {
+                        return `${participant.firstName[0].toUpperCase()}${participant.firstName.slice(1)} ${participant.lastName[0].toUpperCase()}${participant.lastName.slice(1)}`;
+                    } else {
+                        return 'Unknown Participant';
+                    }
+                }));
+
+                // Return a new object that spreads the original item and updates participants to a string.
+                return { ...item._doc, participants: participantNames.join(", "), room: room.room };
+            });
+
+            // Await the resolution of all modified bookings.
+            Promise.all(bookingPromises)
+                .then(modifiedBookings => {
+                    res.render("bookings.ejs", { bookings: modifiedBookings, currentUser: req.session.currentUser });
+                })
+                .catch(error => {
+                    console.error("Error processing bookings:", error);
+                    // Handle the error, maybe send a response indicating failure.
+                });
+        })
+        .catch(error => {
+            res.status(500).send(error.message);
+        });
 });
+
+// // NEW - show form to make new bookings
+router.get("/new", isAuthenticated, (req, res) => {
+    db.Room.find({})
+        .then(rooms => {
+            res.render("new-booking.ejs", { rooms: rooms, currentUser: req.session.currentUser })
+        })
+        .catch(error => {
+            res.status(500).send(error.message)
+        })
+})
+
+// // // DELETE - delete a particular booking, then redirect
+router.delete("/:id", isAuthenticated, (req, res) => {
+    db.Booking.findByIdAndDelete(req.params.id)
+        .then(() => {
+            res.redirect("/booking")
+        })
+        .catch(error => {
+            res.status(500).send(error.message)
+        })
+})
+
+// UPDATE - update the existing booking, then redirect
+router.put("/:id", isAuthenticated, async (req, res) => {
+    //Extracting booking date
+    const updatedBooking = {
+        room: req.body.room,
+        bookerId: req.session.currentUser._id,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        subject: req.body.subject,
+    };
+    updatedBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
+
+        let lastName = participant.trim().split(" ")[1];
+        lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+        const colleague = await db.Employee.findOne({ lastName: lastName });
+        return colleague ? colleague._id : null;
+    }));
+    console.log(updatedBooking, 99999999)
+    updatedBooking.participants = updatedBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+    // }
+    updatedBooking.participants = [req.session.currentUser._id, ...updatedBooking.participants]
+    console.log(updatedBooking, 888888888)
+    db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
+    res.redirect("/booking")
+})
+
+
+
+
+// CREATE - add a new booking, then redirect
+// POST route to handle form submission and create a new booking
+router.post('/', isAuthenticated, async (req, res) => {
+    // Extracting booking data
+    const newBooking = {
+        room: req.body.room,
+        bookerId: req.session.currentUser._id,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        subject: req.body.subject,
+    };
+    newBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
+        let lastName = participant.trim().split(" ")[1];
+        lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+        const colleague = await db.Employee.findOne({ lastName: lastName });
+        return colleague ? colleague._id : null;
+    }));
+    newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+    // }
+    newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
+    const book = await db.Booking.create(newBooking)
+    res.redirect('/booking')// Redirect to /booking to see the list of all bookings or to the newly created booking's detail page
+});
+
+
+// EDIT - show edit form of a particular booking
+router.get("/:id/edit", isAuthenticated, (req, res) => {
+    console.log(req.params.id, 333333333)
+    db.Booking.findById(req.params.id)
+        .then(booking => {
+            db.Room.find({})
+                .then(rooms => {
+                            Promise.all(booking.participants.map(async (participantId) => {
+                                const participant = await db.Employee.findById(participantId); // Correctly await the document.
+                                if (participant) {
+                                    return `${participant.firstName[0].toUpperCase()}${participant.firstName.slice(1)} ${participant.lastName[0].toUpperCase()}${participant.lastName.slice(1)}`;
+                                } else {
+                                    return 'Unknown Participant';
+                                }
+                            }))
+                                .then(participantNames => {
+                                    // Return a new object that spreads the original item and updates participants to a string.
+                                    booking = { ...booking._doc, participants: participantNames.join(", ") };
+                                    res.render("edit-booking.ejs", { booking: booking, rooms: rooms, currentUser: req.session.currentUser })
+                                })
+                        })
+                        .catch(error => {
+                            console.error("Error processing bookings:", error);
+                            // Handle the error, maybe send a response indicating failure.
+                        });
+
+        })
+        .catch(error => {
+            res.status(500).send(error.message)
+        })
+})
+
+// SHOW - details of the bookings - //update and deletion
+router.get("/:id", isAuthenticated, (req, res) => {
+    db.Booking.findById(req.params.id)
+        .then(bookings => {
+            // Await the resolution of all participant name fetches for this booking.
+            db.Room.findById(bookings.room)
+                .then(room => {
+                    Promise.all(bookings.participants.map(async (participantId) => {
+                        const participant = await db.Employee.findById(participantId); // Correctly await the document.
+                        if (participant) {
+                            return `${participant.firstName[0].toUpperCase()}${participant.firstName.slice(1)} ${participant.lastName[0].toUpperCase()}${participant.lastName.slice(1)}`;
+                        } else {
+                            return 'Unknown Participant';
+                        }
+                    }))
+                        .then(participantNames => {
+                            // Return a new object that spreads the original item and updates participants to a string.
+                            bookings = { ...bookings._doc, participants: participantNames.join(", "), room: room.room };
+                            res.render("details-booking.ejs", { booking: bookings, currentUser: req.session.currentUser })
+                        })
+                        .catch(error => {
+                            console.error("Error processing bookings:", error);
+                            // Handle the error, maybe send a response indicating failure.
+                        });
+                })
+
+
+
+        })
+        .catch(error => {
+            res.status(500).send(error.message)
+        })
+})
+
 
 
 

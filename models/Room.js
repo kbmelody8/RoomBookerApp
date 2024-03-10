@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const meetingRoomSchema = new mongoose.Schema({
+const roomSchema = new mongoose.Schema({
     room: {
         type: String,
         required: true,
@@ -26,4 +26,4 @@ const meetingRoomSchema = new mongoose.Schema({
     }]
 });
 
-module.exports = mongoose.model("MeetingRoom", meetingRoomSchema);
+module.exports = mongoose.model("Room", roomSchema);

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head.ejs', {title: 'Edit Booking'}) %>
+</head>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <div class="max-w-xl mx-auto py-12">
+        <h1 class="text-xl font-bold mb-6">Edit Booking</h1>
+        <form action="/booking/<%= booking._id %>?_method=PUT" method="POST">
+            <div>
+                <label for="room" class="block text-sm font-medium text-gray-700">Room</label>
+                <select id="room" name="room" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <% rooms.forEach(room => { %>
+                        <option value="<%= room._id %>" <%= room._id.toString() === booking.room.toString() ? 'selected' : '' %>><%= room.room %> - Floor: <%= room.floor %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div>
+                <label for="startTime" class="block text-sm font-medium text-gray-700">Start Time</label>
+                <input type="datetime-local" id="startTime" name="startTime" 
+                       value="<%= new Date(new Date(booking.startTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>" 
+                       required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="endTime" class="block text-sm font-medium text-gray-700">End Time</label>
+                <input type="datetime-local" id="endTime" name="endTime" 
+                       value="<%= new Date(new Date(booking.endTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>" 
+                       required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            
+            <div>
+                <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
+                <input type="text" id="subject" name="subject" value="<%=booking.subject%>" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+            <div>
+                <label for="participants" class="block text-sm font-medium text-gray-700">Participants</label>
+                <input type="text" id="participants" name="participants" value="<%=booking.participants%>" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-2 text-sm text-gray-500">Enter participants full names separated by commas.</p>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Edit Booking</button>
+        </form>
+    </div>
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
