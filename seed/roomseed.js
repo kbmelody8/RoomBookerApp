@@ -9,13 +9,13 @@ const rooms = [
         room: "Tokyo",
         floor: 1,
         capacity: 10,
-        bookedStatus: true,
+        bookedStatus: false,
     },
     {
         room: "New York",
         floor: 1,
         capacity: 30,
-        bookedStatus: true,
+        bookedStatus: false,
     },
     {
         room: "Paris",
@@ -27,7 +27,7 @@ const rooms = [
         room: "London",
         floor: 2,
         capacity: 5,
-        bookedStatus: true,
+        bookedStatus: false,
     },
     {
         room: "Sydney",

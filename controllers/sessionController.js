@@ -4,7 +4,7 @@ const router = require("express").Router()
 
 
 router.get("/signin", (req, res) => {
-    res.render("signin.ejs")
+    res.render("signin.ejs", {currentUser: null})
 })
 
 //SIGNIN
@@ -30,8 +30,9 @@ router.post("/signin", async (req, res)=> {
 })
 
 router.get("/signup", (req, res) => {
-    res.render("signup.ejs")
+    res.render("signup.ejs", {currentUser: null})
 })
+
 
 //SIGNUP
 router.post('/signup', async (req, res) => {

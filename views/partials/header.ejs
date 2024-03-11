@@ -1,0 +1,11 @@
+<header class="fixed py-10 bg-sky-200 top-0 left-0 right-0 ">
+    <div class="max-w-screen-xl mx-auto my-0">
+    <a class="mb-4 justify-center flex gap-4 items-center" href="/profile">
+        <img class="rounded-full w-16 h-16" src="/assets/logo.png" alt="Company Logo">
+        <h1 class="text-[36px] font-bold ">NOVA INNOVATIONS</h1>
+    </a>
+    <% if (currentUser) { %>
+        <%- include('./nav.ejs') %>
+    <% } %>
+</div>
+</header>

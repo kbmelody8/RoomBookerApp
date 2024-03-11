@@ -28,7 +28,7 @@ router.get("/", isAuthenticated,  (req, res) => {
 router.get("/:id", isAuthenticated, (req, res) => {
     db.Room.findById(req.params.id)
     .then(room => {
-        res.render("room-details.ejs", { room: room });
+        res.render("room-details.ejs", { room: room,  currentUser: req.session.currentUser  });
     })
     .catch(err => {
         res.status(500).json({error: err.message});

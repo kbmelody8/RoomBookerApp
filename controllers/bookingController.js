@@ -86,7 +86,8 @@ router.put("/:id", isAuthenticated, async (req, res) => {
     // }
     updatedBooking.participants = [req.session.currentUser._id, ...updatedBooking.participants]
     console.log(updatedBooking, 888888888)
-    db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
+    //debugged and added await so that editting would be submitted properly
+    await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
     res.redirect("/booking")
 })
 
