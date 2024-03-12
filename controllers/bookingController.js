@@ -23,7 +23,7 @@ router.get("/", isAuthenticated, (req, res) => {
                     }
                 }));
 
-                // Return a new object that spreads the original item and updates participants to a string.
+                // Return a new object that spreads the original item and updates participants to a string
                 return { ...item._doc, participants: participantNames.join(", "), room: room.room };
             });
 
@@ -53,7 +53,7 @@ router.get("/new", isAuthenticated, (req, res) => {
         })
 })
 
-// // // DELETE - delete a particular booking, then redirect
+// DELETE - delete a particular booking, then redirect
 router.delete("/:id", isAuthenticated, (req, res) => {
     db.Booking.findByIdAndDelete(req.params.id)
         .then(() => {
@@ -64,6 +64,7 @@ router.delete("/:id", isAuthenticated, (req, res) => {
         })
 })
 
+//WORKED ON DEBUGGING
 // UPDATE - update the existing booking, then redirect
 router.put("/:id", isAuthenticated, async (req, res) => {
     //Extracting booking date
@@ -90,8 +91,6 @@ router.put("/:id", isAuthenticated, async (req, res) => {
     await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
     res.redirect("/booking")
 })
-
-
 
 
 // CREATE - add a new booking, then redirect
@@ -155,7 +154,7 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
 router.get("/:id", isAuthenticated, (req, res) => {
     db.Booking.findById(req.params.id)
         .then(bookings => {
-            // Await the resolution of all participant name fetches for this booking.
+            // Await the resolution of all participant name fetches for this booking
             db.Room.findById(bookings.room)
                 .then(room => {
                     Promise.all(bookings.participants.map(async (participantId) => {
@@ -173,7 +172,6 @@ router.get("/:id", isAuthenticated, (req, res) => {
                         })
                         .catch(error => {
                             console.error("Error processing bookings:", error);
-                            // Handle the error, maybe send a response indicating failure.
                         });
                 })
 
