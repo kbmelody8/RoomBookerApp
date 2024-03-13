@@ -36,7 +36,6 @@ router.get("/", isAuthenticated, (req, res) => {
                 })
                 .catch(error => {
                     console.error("Error processing bookings:", error);
-                    // Handle the error, maybe send a response indicating failure.
                 });
         })
         .catch(error => {
@@ -121,7 +120,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         return colleague ? colleague._id : null;
     }));
     newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
-    // } //will debug later 
+    // } //will debug later - only works with DB employees, but it's an optional field , smth wrong w null logic?
     newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
     const book = await db.Booking.create(newBooking)
     res.redirect('/booking')// Redirect to /booking to see the list of all bookings or to the newly created booking's detail page
