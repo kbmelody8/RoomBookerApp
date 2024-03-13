@@ -56,11 +56,11 @@
                                 <% bookings.forEach(booking=> { %>
                                     <li
                                         class="rounded-xl p-6 bg-sky-500/60 gap-4 flex flex-col justify-center items-center ">
-                                        <h2>Room: <%= booking.room%>
+                                        <h2><span class="font-bold">Room:</span> <%= booking.room%>
                                         </h2>
-                                        <p>Start Time: <%= booking.startTime %>
+                                        <p><span class="font-bold">Start Time:</span> <%= booking.startTime %>
                                         </p>
-                                        <p>Participants: <%= booking.participants%>
+                                        <p><span class="font-bold">Participants:</span> <%= booking.participants%>
                                         </p>
                                         <a href="/booking/<%=booking._id%>"
                                             class="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">

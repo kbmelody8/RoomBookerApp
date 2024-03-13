@@ -11,16 +11,15 @@
             <main class="py-[200px] bg-[url('/assets/neutral.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
                 <div class="max-w-[1200px] my-auto mx-auto">
                     <div class="max-w-[600px] mx-auto gap-4 flex flex-col justify-center items-center">
-                        <h1>Booking Details</h1>
-                        <h2>Room: <%= booking.room%>
-                        </h2>
-                        <p>Start Time: <%= booking.startTime %>
+                        <h1 class="text-[24px] mb-4 ext-xl font-bold">Booking Details</h1>
+                        <h2><span class="font-bold">Room:</span> <%= booking.room%></h2>
+                        <p><span class="font-bold">Start Time:</span> <%= booking.startTime %>
                         </p>
-                        <p>End Time: <%= booking.endTime %>
+                        <p><span class="font-bold">End Time:</span> <%= booking.endTime %>
                         </p>
-                        <p>Subject: <%= booking.subject %>
+                        <p><span class="font-bold">Subject:</span> <%= booking.subject %>
                         </p>
-                        <p>Participants: <%= booking.participants%>
+                        <p><span class="font-bold">Participants:</span> <%= booking.participants%>
                         </p>
                         <form class="w-full flex justify-center" action="/booking/<%=booking._id%>?_method=DELETE"
                             method="POST">
