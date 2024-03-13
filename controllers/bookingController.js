@@ -69,12 +69,17 @@ router.delete("/:id", isAuthenticated, (req, res) => {
 //WORKED ON DEBUGGING
 // UPDATE - update the existing booking, then redirect
 router.put("/:id", isAuthenticated, async (req, res) => {
+    //Luxon
+    const timeZone = "local"
     //Extracting booking date
     const updatedBooking = {
         room: req.body.room,
         bookerId: req.session.currentUser._id,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime,
+        // startTime: req.body.startTime,
+        // endTime: req.body.endTime,
+        //luxon
+        startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
+        endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
         subject: req.body.subject,
     };
     updatedBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
@@ -102,8 +107,11 @@ router.post('/', isAuthenticated, async (req, res) => {
     const newBooking = {
         room: req.body.room,
         bookerId: req.session.currentUser._id,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime,
+        // startTime: req.body.startTime,
+        // endTime: req.body.endTime,
+        //Luxon 
+        startTime: req.body.startTime, //DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
+        endTime: req.body.endTime, //DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(), 
         subject: req.body.subject,
     };
     newBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
@@ -113,7 +121,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         return colleague ? colleague._id : null;
     }));
     newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
-    // }
+    // } //will debug later 
     newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
     const book = await db.Booking.create(newBooking)
     res.redirect('/booking')// Redirect to /booking to see the list of all bookings or to the newly created booking's detail page
@@ -124,10 +132,20 @@ router.post('/', isAuthenticated, async (req, res) => {
 router.get("/:id/edit", isAuthenticated, (req, res) => {
     db.Booking.findById(req.params.id)
         .then(booking => {
+            //original booking times
+            console.log("Original Booking Times:", booking.startTime, booking.endTime);
+
+                    // Luxon convert the times right after retrieving the booking
+        const timeZone = "America/New_York"; 
+        booking.startTime = DateTime.fromISO(booking.startTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
+        booking.endTime = DateTime.fromISO(booking.endTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
+        
+        console.log("Converted startTime:", booking.startTime);
+        console.log("Converted endTime:", booking.endTime);
             db.Room.find({})
                 .then(rooms => {
                             Promise.all(booking.participants.map(async (participantId) => {
-                                const participant = await db.Employee.findById(participantId); // Correctly await the document.
+                                const participant = await db.Employee.findById(participantId); // Correctly await the document
                                 if (participant) {
                                     return `${participant.firstName[0].toUpperCase()}${participant.firstName.slice(1)} ${participant.lastName[0].toUpperCase()}${participant.lastName.slice(1)}`;
                                 } else {
@@ -142,7 +160,7 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
                         })
                         .catch(error => {
                             console.error("Error processing bookings:", error);
-                            // Handle the error, maybe send a response indicating failure.
+                            
                         });
 
         })
@@ -155,7 +173,15 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
 router.get("/:id", isAuthenticated, (req, res) => {
     db.Booking.findById(req.params.id)
         .then(bookings => {
+            // Log the original booking times
+            console.log("Original Booking Times:", bookings.startTime, bookings.endTime);
+                        // Luxon Convert startTime and endTime 
+                        const timeZone = 'America/New_York'; 
+                        bookings.startTime = DateTime.fromISO(bookings.startTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
+                        bookings.endTime = DateTime.fromISO(bookings.endTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
             // Await the resolution of all participant name fetches for this booking
+            console.log("Converted startTime:", bookings.startTime);
+            console.log("Converted endTime:", bookings.endTime);
             db.Room.findById(bookings.room)
                 .then(room => {
                     Promise.all(bookings.participants.map(async (participantId) => {

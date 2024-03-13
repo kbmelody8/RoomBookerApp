@@ -21,7 +21,7 @@
                     <% }) %>
                 </select>
             </div>
-            <div>
+            <!-- <div>
                 <label for="startTime" class="block text-sm font-medium text-gray-700">Start Time</label>
                 <input type="datetime-local" id="startTime" name="startTime" 
                        value="<%= new Date(new Date(booking.startTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>" 
@@ -32,8 +32,20 @@
                 <input type="datetime-local" id="endTime" name="endTime" 
                        value="<%= new Date(new Date(booking.endTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>" 
                        required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div> -->
+            <div>
+                <p ></p>"<%= booking.endTime%>"
+                <label for="startTime" class="block text-sm font-medium text-gray-700">Start Time</label>
+                <input type="datetime-local" id="startTime" name="startTime" 
+                       value="<%= booking.startTime %>" 
+                       required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div>
-            
+            <div>
+                <label for="endTime" class="block text-sm font-medium text-gray-700">End Time</label>
+                <input type="datetime-local" id="endTime" name="endTime" 
+                       value=<%= booking.endTime %>
+                       required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
             <div>
                 <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
                 <input type="text" id="subject" name="subject" value="<%=booking.subject%>" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
