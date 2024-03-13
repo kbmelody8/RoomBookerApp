@@ -4,7 +4,7 @@ const roomSchema = new mongoose.Schema({
     room: {
         type: String,
         required: true,
-        enum: ["Astana", "Tokyo", "New York", "Paris", "London", "Sydney", "Prague", 'Singapore', 'Dubai', 'Rome'] 
+        enum: ["Astana", "Tokyo", "New York", "Paris", "London", "Sydney", "Prague", 'Singapore', 'Dubai', 'Rome']
     },
     floor: {
         type: Number,
@@ -14,7 +14,7 @@ const roomSchema = new mongoose.Schema({
     capacity: {
         type: Number,
         required: true,
-        enum: [5, 10, 30, 50, 70, 100]
+        enum: [5, 10, 15, 20, 25, 30, 35, 40, 50]
     },
     bookedStatus: {
         type: Boolean,
@@ -23,7 +23,11 @@ const roomSchema = new mongoose.Schema({
     bookings: [{
         type: mongoose.ObjectId,
         ref: "Booking"
-    }]
+    }],
+    photo: {
+        type: String,
+        required: true
+    },
 });
 
 module.exports = mongoose.model("Room", roomSchema);
