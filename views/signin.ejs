@@ -2,18 +2,22 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs', {title: 'Signin'}) %>
+    <style>
+        .label-spacing { margin-top: 5mm; }
+    </style>
 </head>
 <body>
     <%- include('./partials/header.ejs') %>
-    <main class="py-[250px] bg-[url('/assets/login.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
-        <div class="max-w-[1200px] my-auto mx-auto">
-            <div class=" gap-4 flex flex-col justify-center items-center">
-    <h1 class="text-blue-600">Welcome to Nova Innovations!</h1>
-    <form class="gap-4 max-w-[450px] flex flex-col" action="/session/signin" method="POST">
-        <label for="email">Username</label>
-        <input class="border-2 border-solid border-blue-700 p-2 w-[100%]" required type="text" name="email" id="email"/><br>
-        <label for="password">Password</label>
-        <input class="border-2 border-solid border-blue-700 p-2 w-[100%]" required type="password" name="password" id="password"><br>
+
+        <main class="py-[175px] bg-[url('/assets/login.jpeg')] min-h-[100vh] bg-no-repeat bg-cover"> 
+            <div class="max-w-[1200px] my-auto mx-auto">
+                <div class=" gap-4 flex flex-col justify-center items-center">
+                    <h1 class="text-xl text-blue-950 font-bold">Welcome to Nova Innovations!</h1> 
+                    <form class="gap-1 max-w-[450px] flex flex-col" action="/session/signin" method="POST"> 
+                        <label for="email" class="font-bold label-spacing text-center">Username</label> 
+                        <input class="border-2 border-solid border-blue-700 p-2 w-[100%]" required type="text" name="email" id="email"/><br>
+                        <label for="password" class="font-bold text-center">Password</label> 
+                        <input class="border-2 border-solid border-blue-700 p-2 w-[100%]" required type="password" name="password" id="password"><br>
         <button type="submit" class="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white min-w-[160px]">
             <svg aria-hidden="true" class="w-5 h-5 me-3" viewBox="0 0 22 31" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_4151_63004)"><path d="M5.50085 30.1242C8.53625 30.1242 10.9998 27.8749 10.9998 25.1035V20.0828H5.50085C2.46546 20.0828 0.00195312 22.332 0.00195312 25.1035C0.00195312 27.8749 2.46546 30.1242 5.50085 30.1242Z" fill="#0ACF83"/><path d="M0.00195312 15.062C0.00195312 12.2905 2.46546 10.0413 5.50085 10.0413H10.9998V20.0827H5.50085C2.46546 20.0827 0.00195312 17.8334 0.00195312 15.062Z" fill="#A259FF"/><path d="M0.00195312 5.02048C0.00195312 2.24904 2.46546 -0.000244141 5.50085 -0.000244141H10.9998V10.0412H5.50085C2.46546 10.0412 0.00195312 7.79193 0.00195312 5.02048Z" fill="#F24E1E"/><path d="M11 -0.000244141H16.4989C19.5343 -0.000244141 21.9978 2.24904 21.9978 5.02048C21.9978 7.79193 19.5343 10.0412 16.4989 10.0412H11V-0.000244141Z" fill="#FF7262"/><path d="M21.9978 15.062C21.9978 17.8334 19.5343 20.0827 16.4989 20.0827C13.4635 20.0827 11 17.8334 11 15.062C11 12.2905 13.4635 10.0413 16.4989 10.0413C19.5343 10.0413 21.9978 12.2905 21.9978 15.062Z" fill="#1ABCFE"/></g><defs><clipPath id="clip0_4151_63004"><rect width="22" height="30.1244" fill="white" transform="translate(0 -0.000244141)"/></clipPath></defs></svg>                                              
             <span class="w-full">Login</span>
@@ -22,6 +26,13 @@
             </svg>
         </button>
     </form>
+    <p class="font-bold">New Employee?</p>
+    <a href="signup" class="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white min-w-[160px]">
+        <svg aria-hidden="true" class="w-5 h-5 me-3" viewBox="0 0 22 31" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_4151_63004)"><path d="M5.50085 30.1242C8.53625 30.1242 10.9998 27.8749 10.9998 25.1035V20.0828H5.50085C2.46546 20.0828 0.00195312 22.332 0.00195312 25.1035C0.00195312 27.8749 2.46546 30.1242 5.50085 30.1242Z" fill="#0ACF83"/><path d="M0.00195312 15.062C0.00195312 12.2905 2.46546 10.0413 5.50085 10.0413H10.9998V20.0827H5.50085C2.46546 20.0827 0.00195312 17.8334 0.00195312 15.062Z" fill="#A259FF"/><path d="M0.00195312 5.02048C0.00195312 2.24904 2.46546 -0.000244141 5.50085 -0.000244141H10.9998V10.0412H5.50085C2.46546 10.0412 0.00195312 7.79193 0.00195312 5.02048Z" fill="#F24E1E"/><path d="M11 -0.000244141H16.4989C19.5343 -0.000244141 21.9978 2.24904 21.9978 5.02048C21.9978 7.79193 19.5343 10.0412 16.4989 10.0412H11V-0.000244141Z" fill="#FF7262"/><path d="M21.9978 15.062C21.9978 17.8334 19.5343 20.0827 16.4989 20.0827C13.4635 20.0827 11 17.8334 11 15.062C11 12.2905 13.4635 10.0413 16.4989 10.0413C19.5343 10.0413 21.9978 12.2905 21.9978 15.062Z" fill="#1ABCFE"/></g><defs><clipPath id="clip0_4151_63004"><rect width="22" height="30.1244" fill="white" transform="translate(0 -0.000244141)"/></clipPath></defs></svg>                                              
+        <span class="flex-1 text-center">Signup</span>
+        <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+        </svg></a>
     <%- include('./partials/footer.ejs') %>
 </div>
 </div>
