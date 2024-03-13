@@ -1,26 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <%- include('./partials/head.ejs', {title: 'Room Details'}) %>
+    <%- include('./partials/head.ejs', {title: 'Room Details' }) %>
 </head>
 
 <body>
     <%- include('./partials/nav.ejs') %>
-    <%- include('./partials/header.ejs') %>
-    <main class="py-[200px] bg-[url('/assets/meetingroom.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
-        <div class="max-w-[1200px] my-auto mx-auto">
-            <div class="max-w-[450px] mx-auto rounded-lg gap-2 flex flex-col justify-center items-center p-6 bg-sky-500/60">
+        <%- include('./partials/header.ejs') %>
+            <main class="py-[200px] bg-[url('/assets/meetingroom.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
+                <div class="max-w-[1200px] my-auto mx-auto">
+                    <div
+                        class="mx-auto rounded-lg gap-2 flex flex-col justify-center items-center p-6 bg-sky-500/60">
 
-        <h2 class="text-[24px] mb-4 ext-xl font-bold"> Room Details</h2>
+                        <h2 class="text-[24px] mb-4 ext-xl font-bold"> Room Details</h2>
 
-                <p><span class="font-bold">Room name: </span><%=room.room%></p>
-                    <p><span class="font-bold"> Floor: </span> <%= room.floor%></p>
-                    <p><span class="font-bold"> Capacity:</span> <%= room.capacity%></p>
-                    <img class="w-70 h-70" src="<%= room.photo %>" alt="<%=room.room%> photo">
-    <%- include('./partials/footer.ejs') %>
-</div>
-</div>
-</main>
+                        <p><span class="font-bold">Room name: </span>
+                            <%=room.room%>
+                        </p>
+                        <p><span class="font-bold"> Floor: </span>
+                            <%= room.floor%>
+                        </p>
+                        <p><span class="font-bold"> Capacity:</span>
+                            <%= room.capacity%>
+                        </p>
+                        <img class="w-[500px] h-[400px]" src="<%= room.photo %>" alt="<%=room.room%> photo">
+                        <table class ="mt-10 ">
+                            <thead>
+                                <tr class="flex gap-4">
+                                   <th class=" inline-block w-[120px] p-2 flex border-2 border-solid border-black-200 flex-col gap-2"></th> 
+                                    <% for (let day of graphic) { %>
+                                    <th class=" inline-block max-w-[120px] p-2 flex border-2 border-solid border-black-200 flex-col gap-2"><span><%=day.dayOfWeek %></span><span><%=day.date %></span><span><%=day.month%></span></th>
+                                  
+                                    <% } %>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Alfreds Futterkiste</td>
+                                    <td>Maria Anders</td>
+                                    <td>Germany</td>
+                                </tr>
+ 
+                            </tbody>
+                    
+                        </table>
+
+                    </div>
+                    <%- include('./partials/footer.ejs') %>
+                </div>
+                </div>
+            </main>
 </body>
 
 </html>

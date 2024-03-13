@@ -80,21 +80,28 @@ router.put("/:id", isAuthenticated, async (req, res) => {
         startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
         endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
         subject: req.body.subject,
+        participants: []
     };
-    updatedBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
+    if (req.body.participants.trim()) {
+        updatedBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
 
-        let lastName = participant.trim().split(" ")[1];
-        lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
-        const colleague = await db.Employee.findOne({ lastName: lastName });
-        return colleague ? colleague._id : null;
-    }));
- 
-    updatedBooking.participants = updatedBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+            let lastName = participant.trim().split(" ")[1];
+            lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+            const colleague = await db.Employee.findOne({ lastName: lastName });
+            return colleague ? colleague._id : null;
+        }));
+    console.log(updatedBooking.participants, 88888)
+        updatedBooking.participants = updatedBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+    }
+    
     // }
     updatedBooking.participants = [req.session.currentUser._id, ...updatedBooking.participants]
-    
+
     //debugged and added await so that editting would be submitted properly
-    await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
+    const book = await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
+    await db.Room.updateOne({_id: req.body.room},{$set: {bookings: book}}, { new:true })
+    // .then (room => res.redirect('/booking'))
+    // .catch(err => console.log(err))
     res.redirect("/booking")
 })
 
@@ -102,6 +109,7 @@ router.put("/:id", isAuthenticated, async (req, res) => {
 // CREATE - add a new booking, then redirect
 // POST route to handle form submission and create a new booking
 router.post('/', isAuthenticated, async (req, res) => {
+    const timeZone = 'America/New_York';
     // Extracting booking data
     const newBooking = {
         room: req.body.room,
@@ -110,20 +118,31 @@ router.post('/', isAuthenticated, async (req, res) => {
         // endTime: req.body.endTime,
         //Luxon 
         startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
-        endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(), 
+        endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
         subject: req.body.subject,
+        participants: []
     };
-    newBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
-        let lastName = participant.trim().split(" ")[1];
-        lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
-        const colleague = await db.Employee.findOne({ lastName: lastName });
-        return colleague ? colleague._id : null;
-    }));
-    newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
-    // } //will debug later - only works with DB employees, but it's an optional field , smth wrong w null
+
+    if (req.body.participants.trim()) {
+        newBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
+            let lastName = participant.trim().split(" ")[1];
+            lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+            const colleague = await db.Employee.findOne({ lastName: lastName });
+            return colleague ? colleague._id : null; // } 
+        }));
+        newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+        //will debug later - only works with DB employees, but it's an optional field , smth wrong w null
+
+    }
     newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
     const book = await db.Booking.create(newBooking)
-    res.redirect('/booking')// Redirect to /booking to see the list of all bookings or to the newly created booking's detail page
+    db.Room.findById(req.body.room)
+    .then (room => {
+        const updatedRoom = [...room.bookings, book]
+        db.Room.updateOne({_id: req.body.room},{$set:{bookings: updatedRoom} }, { new: true })
+        .then(updatedRoom => res.redirect("/booking"))
+       })
+    .catch(err => console.log(err))
 });
 
 
@@ -134,37 +153,38 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
             //original booking times
             console.log("Original Booking Times:", booking.startTime, booking.endTime);
 
-                    // Luxon convert the times right after retrieving the booking
-        const timeZone = "America/New_York"; 
-        // booking.startTime = DateTime.fromISO(booking.startTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
-        // booking.endTime = DateTime.fromISO(booking.endTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
-        
-        console.log("Converted startTime:", booking.startTime);
-        console.log("Converted endTime:", booking.endTime);
+            // Luxon convert the times right after retrieving the booking
+            // const timeZone = "America/New_York"; 
+            // booking.startTime = DateTime.fromISO(booking.startTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
+            // booking.endTime = DateTime.fromISO(booking.endTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
+
+            console.log("Converted startTime:", booking.startTime);
+            console.log("Converted endTime:", booking.endTime);
             db.Room.find({})
                 .then(rooms => {
-                            Promise.all(booking.participants.map(async (participantId) => {
-                                const participant = await db.Employee.findById(participantId); // Correctly await the document
-                                if (participant) {
-                                    return `${participant.firstName[0].toUpperCase()}${participant.firstName.slice(1)} ${participant.lastName[0].toUpperCase()}${participant.lastName.slice(1)}`;
-                                } else {
-                                    return 'Unknown Participant';
-                                }
-                            }))
-                                .then(participantNames => {
-                                    // Return a new object that spreads the original item and updates participants to a string.
-                                    booking = { ...booking._doc, 
-                                        participants: participantNames.join(", ")
-                                    };
-                                 
-                                   
-                                    res.render("edit-booking.ejs", { booking: booking, rooms: rooms, currentUser: req.session.currentUser })
-                                })
+                    Promise.all(booking.participants.map(async (participantId) => {
+                        const participant = await db.Employee.findById(participantId); // Correctly await the document
+                        if (participant) {
+                            return `${participant.firstName[0].toUpperCase()}${participant.firstName.slice(1)} ${participant.lastName[0].toUpperCase()}${participant.lastName.slice(1)}`;
+                        } else {
+                            return 'Unknown Participant';
+                        }
+                    }))
+                        .then(participantNames => {
+                            // Return a new object that spreads the original item and updates participants to a string.
+                            booking = {
+                                ...booking._doc,
+                                participants: participantNames.join(", ")
+                            };
+                            console.log(booking)
+
+                            res.render("edit-booking.ejs", { booking: booking, rooms: rooms, currentUser: req.session.currentUser, dateTime: DateTime })
                         })
-                        .catch(error => {
-                            console.error("Error processing bookings:", error);
-                            
-                        });
+                })
+                .catch(error => {
+                    console.error("Error processing bookings:", error);
+
+                });
 
         })
         .catch(error => {
@@ -178,10 +198,10 @@ router.get("/:id", isAuthenticated, (req, res) => {
         .then(bookings => {
             // Log the original booking times
             console.log("Original Booking Times:", bookings.startTime, bookings.endTime);
-                        // Luxon Convert startTime and endTime 
-                        const timeZone = 'America/New_York'; 
-                        bookings.startTime = DateTime.fromISO(bookings.startTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
-                        bookings.endTime = DateTime.fromISO(bookings.endTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
+            // Luxon Convert startTime and endTime 
+            const timeZone = 'America/New_York';
+            bookings.startTime = DateTime.fromISO(bookings.startTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
+            bookings.endTime = DateTime.fromISO(bookings.endTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
             // Await the resolution of all participant name fetches for this booking
             console.log("Converted startTime:", bookings.startTime);
             console.log("Converted endTime:", bookings.endTime);
