@@ -71,11 +71,15 @@ app.use("/rooms", roomCtrl)
 // Mount ROUTES
 // INDUCES
 // INDEX route for fetching all employees
-app.get("/", (req, res) => {
-    db.Employee.find({})
-      .then(employees => res.json(employees))
-      .catch(error => res.status(500).json({ error: 'An error occurred fetching employees' }));
-  });
+// app.get("/", (req, res) => {
+//     db.Employee.find({})
+//       .then(employees => res.json(employees))
+//       .catch(error => res.status(500).json({ error: 'An error occurred fetching employees' }));
+//   });
+
+app.get("/", (req, res)=> {
+  res.render("home.ejs", {currentUser: null})
+})
 
 //SEEDING route for rooms
 app.get ("/seed", function (req, res) {
@@ -91,6 +95,9 @@ app.get ("/seed", function (req, res) {
               })
       })
 });
+
+
+
 
 /* App listening on the specified in ENV port
 --------------------------------------------------------------- */

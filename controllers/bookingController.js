@@ -109,8 +109,8 @@ router.post('/', isAuthenticated, async (req, res) => {
         // startTime: req.body.startTime,
         // endTime: req.body.endTime,
         //Luxon 
-        startTime: req.body.startTime, //DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
-        endTime: req.body.endTime, //DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(), 
+        startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
+        endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(), 
         subject: req.body.subject,
     };
     newBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
@@ -120,7 +120,7 @@ router.post('/', isAuthenticated, async (req, res) => {
         return colleague ? colleague._id : null;
     }));
     newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
-    // } //will debug later - only works with DB employees, but it's an optional field , smth wrong w null logic?
+    // } //will debug later - only works with DB employees, but it's an optional field , smth wrong w null
     newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
     const book = await db.Booking.create(newBooking)
     res.redirect('/booking')// Redirect to /booking to see the list of all bookings or to the newly created booking's detail page
@@ -136,8 +136,8 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
 
                     // Luxon convert the times right after retrieving the booking
         const timeZone = "America/New_York"; 
-        booking.startTime = DateTime.fromISO(booking.startTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
-        booking.endTime = DateTime.fromISO(booking.endTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
+        // booking.startTime = DateTime.fromISO(booking.startTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
+        // booking.endTime = DateTime.fromISO(booking.endTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
         
         console.log("Converted startTime:", booking.startTime);
         console.log("Converted endTime:", booking.endTime);
@@ -153,7 +153,11 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
                             }))
                                 .then(participantNames => {
                                     // Return a new object that spreads the original item and updates participants to a string.
-                                    booking = { ...booking._doc, participants: participantNames.join(", ") };
+                                    booking = { ...booking._doc, 
+                                        participants: participantNames.join(", ")
+                                    };
+                                 
+                                   
                                     res.render("edit-booking.ejs", { booking: booking, rooms: rooms, currentUser: req.session.currentUser })
                                 })
                         })
