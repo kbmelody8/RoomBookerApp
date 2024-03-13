@@ -7,15 +7,15 @@
 <body>
     <%- include('./partials/nav.ejs') %>
     <%- include('./partials/header.ejs') %>
-    <main class="py-[200px] bg-[url('/assets/neutral.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
+    <main class="py-[200px] bg-[url('/assets/meetingroom.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
         <div class="max-w-[1200px] my-auto mx-auto">
             <div class="max-w-[450px] mx-auto rounded-lg gap-2 flex flex-col justify-center items-center p-6 bg-sky-500/60">
 
-        <h2> Room Details</h2>
-        
-                <p>Room name: <%=room.room%></p>
-                    <p>Floor: <%= room.floor%></p>
-                    <p>Capacity:<%= room.capacity%></p>
+        <h2 class="text-[24px] mb-4 ext-xl font-bold"> Room Details</h2>
+
+                <p><span class="font-bold">Room name: </span><%=room.room%></p>
+                    <p><span class="font-bold"> Floor: </span> <%= room.floor%></p>
+                    <p><span class="font-bold"> Capacity:</span> <%= room.capacity%></p>
                     <img class="w-70 h-70" src="<%= room.photo %>" alt="<%=room.room%> photo">
     <%- include('./partials/footer.ejs') %>
 </div>

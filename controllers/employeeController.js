@@ -27,8 +27,6 @@ function getRandomDepartmentAndPosition(departments) {
   const randomPosition = departments[randomDeptKey] [Math.floor(Math.random() * departments[randomDeptKey].length)]; 
   return { department: randomDeptKey, position: randomPosition };
 }
-// console.log(getRandomDepartmentAndPosition(departments))
-
 
   // Function to clear and then seed the Employee collection
    function fetchAndCreateEmployees (req, res) {

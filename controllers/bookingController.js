@@ -1,9 +1,11 @@
 require("dotenv").config();
+const { DateTime } = require('luxon');
 const express = require("express");
 const db = require('../models')
 const router = express.Router()
 const isAuthenticated = require("../controllers/isAuthenticated")
 router.use(isAuthenticated)
+
 
 
 // INDEX - see all their bookings
@@ -82,11 +84,11 @@ router.put("/:id", isAuthenticated, async (req, res) => {
         const colleague = await db.Employee.findOne({ lastName: lastName });
         return colleague ? colleague._id : null;
     }));
-    console.log(updatedBooking, 99999999)
+ 
     updatedBooking.participants = updatedBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
     // }
     updatedBooking.participants = [req.session.currentUser._id, ...updatedBooking.participants]
-    console.log(updatedBooking, 888888888)
+    
     //debugged and added await so that editting would be submitted properly
     await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
     res.redirect("/booking")
@@ -120,7 +122,6 @@ router.post('/', isAuthenticated, async (req, res) => {
 
 // EDIT - show edit form of a particular booking
 router.get("/:id/edit", isAuthenticated, (req, res) => {
-    console.log(req.params.id, 333333333)
     db.Booking.findById(req.params.id)
         .then(booking => {
             db.Room.find({})
