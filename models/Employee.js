@@ -37,9 +37,12 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true
   }, 
-  // isAdmin: {
-  //   type: Boolean,
-  // }
+
+bookings: [{
+    type: mongoose.ObjectId,
+    ref: "Booking"
+  }]
+
 });
 
 module.exports = mongoose.model("Employee", employeeSchema);
