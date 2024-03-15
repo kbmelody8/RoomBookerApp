@@ -27,7 +27,6 @@ router.get("/", isAuthenticated, (req, res) => {
                 allRelevantBookings.push(booking); // Add to the combined list of unique bookings
             }
         });
-
         // Process the deduplicated list of bookings to include participant names and room details
         const bookingPromises = allRelevantBookings.map(async (item) => {
             // Find the room details for each booking
@@ -84,7 +83,7 @@ router.delete("/:id", isAuthenticated, (req, res) => {
             // Check if the currently logged-in user is the one who created the booking
             if (booking.bookerId.toString() !== req.session.currentUser._id.toString()) {
                 // If not, redirect them with an error message or to a different page
-                return res.status(403).send("Unauthorized: You can only delete bookings you have created.");
+                return res.send("Unauthorized: You can only delete bookings you have created.");
             }
 
             // If authorized, proceed with deletion
@@ -101,85 +100,172 @@ router.delete("/:id", isAuthenticated, (req, res) => {
         });
 });
 
-//WORKED ON DEBUGGING
+
+// // UPDATE - update the existing booking, then redirect
+// router.put("/:id", isAuthenticated, async (req, res) => {
+//     //Luxon
+//     const timeZone = "local"
+//         // Convert start and end times to UTC for comparison
+//         const startTimeUTC = DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO();
+//         const endTimeUTC = DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO();
+    
+//         // Check for overlapping bookings
+//         const overlappingBookings = await db.Booking.find({
+//             room: req.body.room,
+//             $or: [
+//                 { startTime: { $lte: new Date(endTimeUTC) }, endTime: { $gte: new Date(startTimeUTC) } },
+//                 { endTime: { $gte: new Date(startTimeUTC) }, startTime: { $lte: new Date(endTimeUTC) } }
+//             ]
+//         });
+    
+//         // If there are overlapping bookings, respond with an error
+//         if (overlappingBookings.length > 0) {
+//             return res.send("The room is already booked for the requested time." )
+//         }
+//     //Extracting booking date
+//     const updatedBooking = {
+//         room: req.body.room,
+//         bookerId: req.session.currentUser._id,
+//         //luxon
+//         startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
+//         endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
+//         subject: req.body.subject,
+//         participants: []
+//     };
+//     if (req.body.participants.trim()) {
+//         updatedBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
+
+//             let lastName = participant.trim().split(" ")[1];
+//             lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+//             const colleague = await db.Employee.findOne({ lastName: lastName });
+//             return colleague ? colleague._id : null;
+//         }));
+//     console.log(updatedBooking.participants, 88888)
+//         updatedBooking.participants = updatedBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+//     }
+    
+//     updatedBooking.participants = [req.session.currentUser._id, ...updatedBooking.participants]
+
+//     //debugged and added await so that editting would be submitted properly
+//     const book = await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
+//     await db.Room.updateOne({_id: req.body.room},{$set: {bookings: book}}, { new:true })
+
+//     res.redirect("/booking")
+// })
+
 // UPDATE - update the existing booking, then redirect
 router.put("/:id", isAuthenticated, async (req, res) => {
-    //Luxon
-    const timeZone = "local"
-    //Extracting booking date
-    const updatedBooking = {
-        room: req.body.room,
-        bookerId: req.session.currentUser._id,
-        //luxon
-        startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
-        endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
-        subject: req.body.subject,
-        participants: []
-    };
-    if (req.body.participants.trim()) {
-        updatedBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
+    const timeZone = "local";
+    const startTimeUTC = DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO();
+    const endTimeUTC = DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO();
 
+    // Check for overlapping bookings excluding the current booking
+    const overlappingBookings = await db.Booking.find({
+        room: req.body.room,
+        $or: [
+            { startTime: { $lte: new Date(endTimeUTC) }, endTime: { $gte: new Date(startTimeUTC) } },
+            { endTime: { $gte: new Date(startTimeUTC) }, startTime: { $lte: new Date(endTimeUTC) } }
+        ],
+        _id: { $ne: req.params.id }
+    });
+
+    if (overlappingBookings.length > 0) {
+        return res.send("The room is already booked for the requested time.");
+    }
+
+    let participants = [];
+    if (req.body.participants.trim()) {
+        participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
             let lastName = participant.trim().split(" ")[1];
-            lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+            lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase();
             const colleague = await db.Employee.findOne({ lastName: lastName });
             return colleague ? colleague._id : null;
         }));
-    console.log(updatedBooking.participants, 88888)
-        updatedBooking.participants = updatedBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
+        participants = participants.filter(id => id !== null);
     }
-    
-    updatedBooking.participants = [req.session.currentUser._id, ...updatedBooking.participants]
 
-    //debugged and added await so that editting would be submitted properly
-    const book = await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true })
-    await db.Room.updateOne({_id: req.body.room},{$set: {bookings: book}}, { new:true })
+    // // Add the booker's ID and remove duplicates
+    // participants = [...new Set([req.session.currentUser._id, ...participants])];
+// Add the booker's ID and remove duplicates, ensuring the booker's ID is not redundantly added if it's already in the participants array
+participants = [...new Set([req.session.currentUser._id, ...participants])].filter(id => id.toString() !== req.session.currentUser._id.toString());
 
-    res.redirect("/booking")
-})
+    // Update the booking
+    const updatedBooking = {
+        room: req.body.room,
+        bookerId: req.session.currentUser._id,
+        startTime: startTimeUTC,
+        endTime: endTimeUTC,
+        subject: req.body.subject,
+        participants
+    };
+
+    await db.Booking.findByIdAndUpdate(req.params.id, updatedBooking, { new: true });
+    await db.Room.updateOne({_id: req.body.room}, { $set: { bookings: updatedBooking } }, { new: true });
+
+    res.redirect("/booking");
+});
 
 
-// CREATE - add a new booking, then redirect
-// POST route to handle form submission and create a new booking
+//CREATE route
 router.post('/', isAuthenticated, async (req, res) => {
     const timeZone = 'America/New_York';
-    // Extracting booking data
+    // Convert start and end times to UTC for comparison
+    const startTimeUTC = DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO();
+    const endTimeUTC = DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO();
+
+    // Check for overlapping bookings
+    const overlappingBookings = await db.Booking.find({
+        room: req.body.room,
+        $or: [
+            { startTime: { $lte: new Date(endTimeUTC) }, endTime: { $gte: new Date(startTimeUTC) } },
+            { endTime: { $gte: new Date(startTimeUTC) }, startTime: { $lte: new Date(endTimeUTC) } }
+        ]
+    });
+
+    // If there are overlapping bookings, respond with an error
+    if (overlappingBookings.length > 0) {
+        return res.send("The room is already booked for the requested time." )
+    }
+
+    // Proceed with booking creation if no overlap
     const newBooking = {
         room: req.body.room,
         bookerId: req.session.currentUser._id,
-        //Luxon 
-        startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
-        endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
+        startTime: startTimeUTC,
+        endTime: endTimeUTC,
         subject: req.body.subject,
         participants: []
     };
 
+    // Handling participants
     if (req.body.participants.trim()) {
         newBooking.participants = await Promise.all(req.body.participants.split(',').map(async (participant) => {
             let lastName = participant.trim().split(" ")[1];
-            lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
+            lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase();
             const colleague = await db.Employee.findOne({ lastName: lastName });
             return colleague ? colleague._id : null; 
         }));
-        newBooking.participants = newBooking.participants.filter(id => id !== null); 
-
+        newBooking.participants = newBooking.participants.filter(id => id !== null);
     }
-    newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
-    const book = await db.Booking.create(newBooking)
+    newBooking.participants = [req.session.currentUser._id, ...newBooking.participants];
 
-    const participantIds = newBooking.participants
-    // Add the booking ID to the booker and participants' documents
-await db.Employee.updateMany(
-    { _id: { $in: participantIds } },
-    { $push: { bookings: book._id } }
-  );
-  
-    db.Room.findById(req.body.room)
-    .then (room => {
-        const updatedRoom = [...room.bookings, book]
-        db.Room.updateOne({_id: req.body.room},{$set:{bookings: updatedRoom} })
-        .then(updatedRoom => res.redirect("/booking"))
-       })
-    .catch(err => console.log(err))
+    // Create the booking
+    const book = await db.Booking.create(newBooking);
+
+    // Update participant documents with the new booking ID
+    await db.Employee.updateMany(
+        { _id: { $in: newBooking.participants } },
+        { $push: { bookings: book._id } }
+    );
+
+    // Update room document with the new booking ID
+    await db.Room.findByIdAndUpdate(
+        req.body.room,
+        { $push: { bookings: book._id } }
+    );
+
+    // Redirect after successful booking creation
+    res.redirect("/booking");
 });
 
 
@@ -191,11 +277,12 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
             // Check if the currently logged-in user is the one who created the booking
             if (booking.bookerId.toString() !== req.session.currentUser._id.toString()) {
                 // If not, redirect them with an error message or to a different page
-                return res.status(403).send("Unauthorized: You can only edit bookings you have created.");
+                return res.send("Unauthorized: You can only edit bookings you have created.");
             }
         
             db.Room.find({})
                 .then(rooms => {
+                 
                     Promise.all(booking.participants.map(async (participantId) => {
                         const participant = await db.Employee.findById(participantId); // Correctly await the document
                         if (participant) {
@@ -230,15 +317,11 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
 router.get("/:id", isAuthenticated, (req, res) => {
     db.Booking.findById(req.params.id)
         .then(bookings => {
-            // Log the original booking times
-            console.log("Original Booking Times:", bookings.startTime, bookings.endTime);
             // Luxon Convert startTime and endTime 
             const timeZone = 'America/New_York';
             bookings.startTime = DateTime.fromISO(bookings.startTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
             bookings.endTime = DateTime.fromISO(bookings.endTime).setZone(timeZone).toFormat("yyyy-LL-dd'T'HH:mm");
             // Await the resolution of all participant name fetches for this booking
-            console.log("Converted startTime:", bookings.startTime);
-            console.log("Converted endTime:", bookings.endTime);
             db.Room.findById(bookings.room)
                 .then(room => {
                     Promise.all(bookings.participants.map(async (participantId) => {

@@ -5,9 +5,6 @@ const router = express.Router()
 const isAuthenticated = require("../controllers/isAuthenticated")
 router.use(isAuthenticated)
 
-
-
-
 //INDUCES
 
 //INDEX route
@@ -38,3 +35,4 @@ router.get("/:id", isAuthenticated, (req, res) => {
 /* Export these routes so that they are accessible in `server.js`
 --------------------------------------------------------------- */
 module.exports = router
+
