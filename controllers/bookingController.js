@@ -114,8 +114,6 @@ router.post('/', isAuthenticated, async (req, res) => {
     const newBooking = {
         room: req.body.room,
         bookerId: req.session.currentUser._id,
-        // startTime: req.body.startTime,
-        // endTime: req.body.endTime,
         //Luxon 
         startTime: DateTime.fromISO(req.body.startTime, { zone: timeZone }).toUTC().toISO(),
         endTime: DateTime.fromISO(req.body.endTime, { zone: timeZone }).toUTC().toISO(),
@@ -128,10 +126,9 @@ router.post('/', isAuthenticated, async (req, res) => {
             let lastName = participant.trim().split(" ")[1];
             lastName = lastName[0].toUpperCase() + lastName.slice(1).toLowerCase()
             const colleague = await db.Employee.findOne({ lastName: lastName });
-            return colleague ? colleague._id : null; // } 
+            return colleague ? colleague._id : null; 
         }));
-        newBooking.participants = newBooking.participants.filter(id => id !== null); // Remove any nulls if colleague wasn't found
-        //will debug later - only works with DB employees, but it's an optional field , smth wrong w null
+        newBooking.participants = newBooking.participants.filter(id => id !== null); 
 
     }
     newBooking.participants = [req.session.currentUser._id, ...newBooking.participants]
@@ -152,12 +149,7 @@ router.get("/:id/edit", isAuthenticated, (req, res) => {
         .then(booking => {
             //original booking times
             console.log("Original Booking Times:", booking.startTime, booking.endTime);
-
             // Luxon convert the times right after retrieving the booking
-            // const timeZone = "America/New_York"; 
-            // booking.startTime = DateTime.fromISO(booking.startTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
-            // booking.endTime = DateTime.fromISO(booking.endTime).setZone(timeZone).toFormat('yyyy-LL-dd\'T\'HH:mm');
-
             console.log("Converted startTime:", booking.startTime);
             console.log("Converted endTime:", booking.endTime);
             db.Room.find({})
