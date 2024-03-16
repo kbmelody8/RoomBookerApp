@@ -1,24 +1,20 @@
-//First, we need to connect our Express app to MongoDB.
-// This file will define the mongoose connection to the mongodbatlas database
+// Load environment variables from .env file
 require("dotenv").config()
+// Import mongoose to interact with MongoDB
 const mongoose = require("mongoose")
-const axios = require("axios");
+// Import axios for making HTTP requests
+const axios = require("axios")
+// Retrieve MongoDB connection URI from environment variables
 const MONGODBURI = process.env.MONGODBURI
-//const models = require("./models");
-// Connect to MongoDB Atlas
-// use mongoose to connect to our mongodb URI ( the serve string) - Will move this soon to a .env file
-// this uri string should be stored in a .env file, lets do that
-mongoose.connect(MONGODBURI);
+// Connect to MongoDB 
+mongoose.connect(MONGODBURI)
+const db = mongoose.connection
 
-
-// connect and notify the developer we are ready to go
-const db = mongoose.connection;
-
-
+// Event listener for successful connection to MongoDB
 db.on("connected", function() {
     console.log(`Connected to MongoDB @{db.name} at ${db.host}: $db.port`)
 })
-
+// Export the models and seed data for use in other parts of Room-Booker application
 module.exports = {
     Employee: require("./Employee"),
     Booking: require("./Booking"),

@@ -2,12 +2,14 @@
 <html lang="en">
 
 <head>
+    <!-- The title is passed as a variable to the head partial for dynamic page titles. -->
     <%- include('./partials/head.ejs', {title: 'Bookings' }) %>
 </head>
 
 <body>
     <%- include('./partials/nav.ejs') %>
         <%- include('./partials/header.ejs') %>
+            <!-- Resource for styling buttons - CTA Link: https://flowbite.com/docs/typography/links/ -->
             <main class="py-[200px] bg-[url('/assets/login.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
                 <div class="max-w-[1200px] my-auto mx-auto">
 
@@ -50,17 +52,22 @@
                         </a>
                     </div>
                     <% if (!bookings.length) { %>
-                        <p class="text-center text-xl font-bold max-w-[450px] mx-auto rounded-lg gap-2 flex flex-col justify-center items-center p-6 bg-sky-500/60">You have no bookings.</p>
+                        <p
+                            class="text-center text-xl font-bold max-w-[450px] mx-auto rounded-lg gap-2 flex flex-col justify-center items-center p-6 bg-sky-500/60">
+                            You have no bookings.</p>
                         <% } else { %>
                             <ul class="gap-8 grid grid-cols-2">
                                 <% bookings.forEach(booking=> { %>
                                     <li
                                         class="rounded-xl p-6 bg-sky-500/60 gap-4 flex flex-col justify-center items-center ">
-                                        <h2><span class="font-bold">Room:</span> <%= booking.room%>
+                                        <h2><span class="font-bold">Room:</span>
+                                            <%= booking.room%>
                                         </h2>
-                                        <p><span class="font-bold">Start Time:</span> <%= booking.startTime %>
+                                        <p><span class="font-bold">Start Time:</span>
+                                            <%= booking.startTime %>
                                         </p>
-                                        <p><span class="font-bold">Participants:</span> <%= booking.participants%>
+                                        <p><span class="font-bold">Participants:</span>
+                                            <%= booking.participants%>
                                         </p>
                                         <a href="/booking/<%=booking._id%>"
                                             class="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">

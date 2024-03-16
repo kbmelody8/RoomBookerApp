@@ -2,24 +2,32 @@
 <html lang="en">
 
 <head>
+    <!-- The title is passed as a variable to the head partial for dynamic page titles. -->
     <%- include('./partials/head.ejs', {title: 'Booking Details' }) %>
 </head>
 
 <body>
     <%- include('./partials/nav.ejs') %>
         <%- include('./partials/header.ejs') %>
+            <!-- Resource for styling buttons - CTA Link: https://flowbite.com/docs/typography/links/ -->
             <main class="py-[200px] bg-[url('/assets/meetingroom.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
                 <div class="max-w-[1200px] my-auto mx-auto">
                     <div class="max-w-[600px] mx-auto gap-4 flex flex-col justify-center items-center">
                         <h1 class="text-[24px] mb-4 ext-xl font-bold">Booking Details</h1>
-                        <h2><span class="font-bold">Room:</span> <%= booking.room%></h2>
-                        <p><span class="font-bold">Start Time:</span> <%= booking.startTime %>
+                        <h2><span class="font-bold">Room:</span>
+                            <%= booking.room%>
+                        </h2>
+                        <p><span class="font-bold">Start Time:</span>
+                            <%= booking.startTime %>
                         </p>
-                        <p><span class="font-bold">End Time:</span> <%= booking.endTime %>
+                        <p><span class="font-bold">End Time:</span>
+                            <%= booking.endTime %>
                         </p>
-                        <p><span class="font-bold">Subject:</span> <%= booking.subject %>
+                        <p><span class="font-bold">Subject:</span>
+                            <%= booking.subject %>
                         </p>
-                        <p><span class="font-bold">Participants:</span> <%= booking.participants%>
+                        <p><span class="font-bold">Participants:</span>
+                            <%= booking.participants%>
                         </p>
                         <form class="w-full flex justify-center" action="/booking/<%=booking._id%>?_method=DELETE"
                             method="POST">
@@ -135,5 +143,62 @@
                 </div>
             </main>
             <%- include('./partials/footer.ejs') %>
-</body>              
+
+                <!-- Hidden modal div -->
+                <div id="unauthorizedModal"
+                    class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3 text-center">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Unauthorized Action</h3>
+                            <div class="mt-2 px-7 py-3">
+                                <p class="text-sm text-gray-500">You are not authorized to perform this action.</p>
+                            </div>
+                            <div class="items-center px-4 py-3">
+                                <button id="closeModal"
+                                    class="px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Delete unauthorized attempt script -->
+                <script>
+                    // Script to show modal for unauthorized delete attempt
+                    const deleteButton = document.querySelector('form[action*="/booking/"]');
+                    const unauthorizedModal = document.getElementById('unauthorizedModal');
+                    const closeModalButton = document.getElementById('closeModal');
+
+                    deleteButton.addEventListener('submit', (e) => {
+                        const isAuthorizedToDelete = "<%= currentUser._id %>" === "<%= booking.bookerId.toString() %>";
+                        if (!isAuthorizedToDelete) {
+                            e.preventDefault(); // Stop the form submission
+                            unauthorizedModal.classList.remove('hidden'); // Show the modal
+                            unauthorizedModal.querySelector('p').textContent = "You can only delete bookings you have created."; // Set the message for delete
+                        }
+                    });
+
+                    closeModalButton.addEventListener('click', () => {
+                        unauthorizedModal.classList.add('hidden'); // Hide the modal
+                    });
+                </script>
+
+                <!-- Edit unauthorized attempt script -->
+                <script>
+                    // Script to show modal for unauthorized edit attempt
+                    const editButton = document.querySelector('a[href*="/edit"]');
+
+                    editButton.addEventListener('click', (e) => {
+                        const isAuthorizedToEdit = "<%= currentUser._id %>" === "<%= booking.bookerId.toString() %>";
+                        if (!isAuthorizedToEdit) {
+                            e.preventDefault(); // Stop the link navigation
+                            unauthorizedModal.classList.remove('hidden'); // Show the modal
+                            unauthorizedModal.querySelector('p').textContent = "You can only edit bookings you have created."; // Set the message for edit
+                        }
+                    });
+                </script>
+
+
+</body>
+
 </html>

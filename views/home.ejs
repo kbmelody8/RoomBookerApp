@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <!-- The title is passed as a variable to the head partial for dynamic page titles. -->
     <%- include('./partials/head.ejs', {title: 'Home' }) %>
 </head>
 
@@ -11,6 +12,7 @@
             <div class="max-w-[1200px] my-auto mx-auto">
                 <div class=" gap-4 flex flex-col justify-center items-center min-h-[65vh]">
                     <h1 class="text-xl text-blue-950 font-bold">Welcome to Nova Innovations!</h1>
+                    <!-- Resource for styling buttons - CTA Link: https://flowbite.com/docs/typography/links/ -->
                     <a href="/session/signin"
                         class="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white min-w-[160px]">
                         <svg aria-hidden="true" class="w-5 h-5 me-3" viewBox="0 0 22 31" fill="none"

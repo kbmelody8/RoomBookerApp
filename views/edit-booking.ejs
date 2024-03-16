@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <%- include('./partials/head.ejs', {title: 'Edit Booking'}) %>
+    <!-- The title is passed as a variable to the head partial for dynamic page titles. -->
+    <%- include('./partials/head.ejs', {title: 'Edit Booking' }) %>
 </head>
+
 <body>
     <%- include('./partials/nav.ejs') %>
-    <%- include('./partials/header.ejs') %>
-    <main class="py-[200px] bg-[url('/assets/meetingroom.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
-        <div class="max-w-[1200px] my-auto mx-auto">
-            <div class="max-w-[450px] mx-auto gap-4 flex flex-col justify-center items-center">
+        <%- include('./partials/header.ejs') %>
+            <!-- Resource for styling buttons - CTA Link: https://flowbite.com/docs/typography/links/ -->
+            <main class="py-[200px] bg-[url('/assets/meetingroom.jpeg')] min-h-[100vh] bg-no-repeat bg-cover">
+                <div class="max-w-[1200px] my-auto mx-auto">
+                    <div class="max-w-[450px] mx-auto gap-4 flex flex-col justify-center items-center">
 
-    <div class="max-w-xl mx-auto py-12">
-        <h1 class="text-[24px] mb-4 ext-xl font-bold">Edit Booking</h1>
-        <form class="flex flex-col gap-4" action="/booking/<%= booking._id %>?_method=PUT" method="POST">
-            <div>
-                <label for="room" class="block text-sm font-medium text-gray-700">Room</label>
-                <select id="room" name="room" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    <% rooms.forEach(room => { %>
-                        <option value="<%= room._id %>" <%= room._id.toString() === booking.room.toString() ? 'selected' : '' %>><%= room.room %> - Floor: <%= room.floor %></option>
-                    <% }) %>
-                </select>
-            </div>
-            <div>
-                <label for="startTime" class="block text-sm font-medium text-gray-700">Start Time</label>
-                <input type="datetime-local" id="startTime" name="startTime" 
-                       value="<%= new Date(new Date(booking.startTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>" 
-                       required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <div>
-                <label for="endTime" class="block text-sm font-medium text-gray-700">End Time</label>
-                <input type="datetime-local" id="endTime" name="endTime" 
-                       value="<%= new Date(new Date(booking.endTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>" 
-                       required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <!-- <div>
+                        <div class="max-w-xl mx-auto py-12">
+                            <h1 class="text-[24px] mb-4 ext-xl font-bold">Edit Booking</h1>
+                            <form class="flex flex-col gap-4" action="/booking/<%= booking._id %>?_method=PUT"
+                                method="POST">
+                                <div>
+                                    <label for="room" class="block text-sm font-medium text-gray-700">Room</label>
+                                    <select id="room" name="room" required
+                                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <% rooms.forEach(room=> { %>
+                                            <option value="<%= room._id %>"
+                                                <%=room._id.toString()===booking.room.toString() ? 'selected' : '' %>>
+                                                <%= room.room %> - Floor: <%= room.floor %>
+                                            </option>
+                                            <% }) %>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="startTime" class="block text-sm font-medium text-gray-700">Start
+                                        Time</label>
+                                    <input type="datetime-local" id="startTime" name="startTime"
+                                        value="<%= new Date(new Date(booking.startTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>"
+                                        required
+                                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="endTime" class="block text-sm font-medium text-gray-700">End
+                                        Time</label>
+                                    <input type="datetime-local" id="endTime" name="endTime"
+                                        value="<%= new Date(new Date(booking.endTime).getTime() - (4 * 60 * 60000)).toISOString().slice(0, 16) %>"
+                                        required
+                                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <!-- <div>
                 <p ></p>"<%= booking.endTime%>"
                 <label for="startTime" class="block text-sm font-medium text-gray-700">Start Time</label>
                 <input type="datetime-local" id="startTime" name="startTime" 
@@ -46,31 +59,97 @@
                        value=<%= booking.endTime.toISOString().slice(0, 16)%>
                        required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
             </div> -->
-            <div>
-                <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
-                <input type="text" id="subject" name="subject" value="<%=booking.subject%>" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-            </div>
-            <div>
-                <label for="participants" class="block text-sm font-medium text-gray-700">Participants</label>
-                <input type="text" id="participants" name="participants" value="<%=booking.participants%>" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <p class="mt-2 text-sm text-gray-500">Enter participants full names separated by commas.</p>
-            </div>
-            <button type="submit"  class="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white max-w-[250px] mx-auto">
-                <svg aria-hidden="true" class="w-5 h-5 me-3" viewBox="0 0 22 31" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_4151_63004)"><path d="M5.50085 30.1242C8.53625 30.1242 10.9998 27.8749 10.9998 25.1035V20.0828H5.50085C2.46546 20.0828 0.00195312 22.332 0.00195312 25.1035C0.00195312 27.8749 2.46546 30.1242 5.50085 30.1242Z" fill="#0ACF83"/><path d="M0.00195312 15.062C0.00195312 12.2905 2.46546 10.0413 5.50085 10.0413H10.9998V20.0827H5.50085C2.46546 20.0827 0.00195312 17.8334 0.00195312 15.062Z" fill="#A259FF"/><path d="M0.00195312 5.02048C0.00195312 2.24904 2.46546 -0.000244141 5.50085 -0.000244141H10.9998V10.0412H5.50085C2.46546 10.0412 0.00195312 7.79193 0.00195312 5.02048Z" fill="#F24E1E"/><path d="M11 -0.000244141H16.4989C19.5343 -0.000244141 21.9978 2.24904 21.9978 5.02048C21.9978 7.79193 19.5343 10.0412 16.4989 10.0412H11V-0.000244141Z" fill="#FF7262"/><path d="M21.9978 15.062C21.9978 17.8334 19.5343 20.0827 16.4989 20.0827C13.4635 20.0827 11 17.8334 11 15.062C11 12.2905 13.4635 10.0413 16.4989 10.0413C19.5343 10.0413 21.9978 12.2905 21.9978 15.062Z" fill="#1ABCFE"/></g><defs><clipPath id="clip0_4151_63004"><rect width="22" height="30.1244" fill="white" transform="translate(0 -0.000244141)"/></clipPath></defs></svg>                                              
-                <span class="w-full">Edit Booking</span>
-                <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                </svg>
-            </button>
+                                <div>
+                                    <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
+                                    <input type="text" id="subject" name="subject" value="<%=booking.subject%>" required
+                                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                </div>
+                                <div>
+                                    <label for="participants"
+                                        class="block text-sm font-medium text-gray-700">Participants</label>
+                                    <input type="text" id="participants" name="participants"
+                                        value="<%=booking.participants%>"
+                                        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <p class="mt-2 text-sm text-gray-500">Enter participants full names separated by
+                                        commas.</p>
+                                </div>
+                                <button type="submit"
+                                    class="inline-flex items-center justify-center px-4 py-2 text-base font-medium text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white max-w-[250px] mx-auto">
+                                    <svg aria-hidden="true" class="w-5 h-5 me-3" viewBox="0 0 22 31" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_4151_63004)">
+                                            <path
+                                                d="M5.50085 30.1242C8.53625 30.1242 10.9998 27.8749 10.9998 25.1035V20.0828H5.50085C2.46546 20.0828 0.00195312 22.332 0.00195312 25.1035C0.00195312 27.8749 2.46546 30.1242 5.50085 30.1242Z"
+                                                fill="#0ACF83" />
+                                            <path
+                                                d="M0.00195312 15.062C0.00195312 12.2905 2.46546 10.0413 5.50085 10.0413H10.9998V20.0827H5.50085C2.46546 20.0827 0.00195312 17.8334 0.00195312 15.062Z"
+                                                fill="#A259FF" />
+                                            <path
+                                                d="M0.00195312 5.02048C0.00195312 2.24904 2.46546 -0.000244141 5.50085 -0.000244141H10.9998V10.0412H5.50085C2.46546 10.0412 0.00195312 7.79193 0.00195312 5.02048Z"
+                                                fill="#F24E1E" />
+                                            <path
+                                                d="M11 -0.000244141H16.4989C19.5343 -0.000244141 21.9978 2.24904 21.9978 5.02048C21.9978 7.79193 19.5343 10.0412 16.4989 10.0412H11V-0.000244141Z"
+                                                fill="#FF7262" />
+                                            <path
+                                                d="M21.9978 15.062C21.9978 17.8334 19.5343 20.0827 16.4989 20.0827C13.4635 20.0827 11 17.8334 11 15.062C11 12.2905 13.4635 10.0413 16.4989 10.0413C19.5343 10.0413 21.9978 12.2905 21.9978 15.062Z"
+                                                fill="#1ABCFE" />
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_4151_63004">
+                                                <rect width="22" height="30.1244" fill="white"
+                                                    transform="translate(0 -0.000244141)" />
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                    <span class="w-full">Edit Booking</span>
+                                    <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                                    </svg>
+                                </button>
 
 
-    </div>
-    
-</div>
-</div>
-</main>
-<%- include('./partials/footer.ejs') %>
+                        </div>
+
+                    </div>
+                </div>
+            </main>
+            <!-- Conditionally rendering the error modal if there's a booking error message -->
+            <% if (bookingErrorMessage) { %>
+                <!-- Modal overlay with a semi-transparent background, covering the entire screen -->
+                <div id="errorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3 text-center">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Booking Error</h3>
+                            <div class="mt-2 px-7 py-3">
+                                <!-- Error message text in smaller, lighter font  -->
+                                <!-- Displays the error message passed from the server,  set during booking validation failures in either the 'Edit' or 'New' route -->
+                                <p class="text-sm text-gray-500">
+                                    <%= bookingErrorMessage %>
+                                </p>
+                            </div>
+                            <div class="items-center px-4 py-3">
+                                <button onclick="document.getElementById('errorModal').style.display='none'"
+                                    class="px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- JS to display the modal when the page loads if there's an error message  -->
+                <script>
+                    window.onload = () => {
+                        const modal = document.getElementById('errorModal');
+                        if (modal) {
+                            modal.style.display = 'block';
+                        }
+                    };
+                </script>
+                <% } %>
+                    <%- include('./partials/footer.ejs') %>
 
 </body>
-</html>
 
+</html>
