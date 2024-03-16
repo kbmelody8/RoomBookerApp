@@ -1,5 +1,3 @@
-# Project #2: Room-Booker App
-
 # App Title: Room-Booker-App
 
 # Live website:
@@ -32,9 +30,11 @@ Deployed via Heroku, BookerApp aims to improve workplace efficiency and communic
 **Login and Profile Viewing**
 * As an employee, I want to log in to the system so that I can access my profile and the booking system.
 * As an employee, I want to view my profile details including my first and last name, department, position, email, phone number, and photo.
+
 **Room Browsing**
 * As an employee, I want to view a list of all available rooms so that I can find a room that suits my needs.
 * As an employee, I want to click on a room to see its details such as room name, floor, and capacity, so that I can decide if it meets my requirements for booking.
+
 **Booking Management**
 * As an employee, I want to view all the bookings I have made so that I can manage my reservations.
 * As an employee, I want to create a booking for a room so that I can reserve a space for my needs.
