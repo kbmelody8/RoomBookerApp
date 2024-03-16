@@ -16,6 +16,7 @@ Deployed via Heroku, BookerApp aims to improve workplace efficiency and communic
 * Mongoose
 * EJS
 * CSS Framework Tailwind 
+* DALL·E Logo Creator
 
 * [Free API Random User Generator](https://randomuser.me/)
 * Heroku
