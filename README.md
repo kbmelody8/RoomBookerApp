@@ -15,6 +15,7 @@ Deployed via Heroku, BookerApp aims to improve workplace efficiency and communic
 * Express
 * Mongoose
 * EJS
+* Luxon - a library for working with dates and times in JavaScript.
 * CSS Framework Tailwind 
 * DALL·E Logo Creator
 
