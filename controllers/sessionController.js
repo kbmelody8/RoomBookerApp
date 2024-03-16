@@ -7,7 +7,9 @@ const router = require("express").Router()
 
 // Route to display the signin page. 
 router.get("/signin", (req, res) => {
-    res.render("signin.ejs", { currentUser: null }) //'currentUser' is null since the user is not authenticated yet
+    const errorMessage = req.session.errorMessage;
+    delete req.session.errorMessage; // Clear the error message
+    res.render("signin.ejs", { currentUser: null, errorMessage: errorMessage}) //'currentUser' is null since the user is not authenticated yet
 })
 //SIGNIN
 // POST route for handling signin form submission
@@ -17,7 +19,8 @@ router.post("/signin", async (req, res) => {
         const foundEmployee = await db.Employee.findOne({ email: req.body.email })
         // If no employee is found, inform the client that no existing user was found
         if (!foundEmployee) {
-            return res.send('No existing user found. Please sign up')
+            req.session.errorMessage = 'No existing user found. Please sign up.'
+            return res.redirect("/session/signin?error=true")
         } else if (bcrypt.compareSync(req.body.password, foundEmployee.password)) {
             // If an employee is found and the submitted password matches the hashed password in the database
             //save the employee's information in the session to signify they are logged in 
@@ -26,11 +29,14 @@ router.post("/signin", async (req, res) => {
             res.redirect('/profile')
         } else {
             // If the passwords do not match, inform of the below
-            res.send('password does not match')
+            req.session.errorMessage = 'Password does not match.'
+            return res.redirect("/session/signin?error=true")
         }
     }
     catch (err) {
-        console.log(err)
+        console.log(err);
+        req.session.errorMessage = 'An error occurred. Please try again.';
+        return res.redirect("/session/signin?error=true"); // Redirect to signin with an error query
     }
 })
 // Route to display the signup page. Similar to the signin route, 'currentUser' is null here
@@ -45,7 +51,8 @@ router.post('/signup', async (req, res) => {
     const email = req.body.email
     const domain = "@example.com"
     if (!email.endsWith(domain)) {
-        return res.send(`Please use your corporate email domain`)
+        req.session.errorMessage = 'Please use your corporate email domain.'
+            return res.redirect("/session/signin?error=true")
     }
     // Find by email the existing employee trying to sign up, so that passwords can be compared
     try {
